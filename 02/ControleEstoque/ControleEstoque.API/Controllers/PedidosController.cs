@@ -1,12 +1,15 @@
 ﻿﻿using ControleEstoque.API.DTOs;
 using ControleEstoque.API.Models;
 using ControleEstoque.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ControleEstoque.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PedidosController : ControllerBase
     {
         private readonly IPedidoService _pedidoService;
@@ -46,30 +49,23 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Cliente")] //só clientes podem criar pedido
         public async Task<IActionResult> CriarPedido([FromBody] CriarPedidoDto pedido)
         {
-            /*
-            //List<ItemPedido> listaItens = new List<ItemPedido>();
-            //foreach(var item in pedido.Itens)
-            //{
-            //    var novoItem = new ItemPedido
-            //    {
-            //        Id = item.ProdutoId,
-            //        Quantidade = item.Quantidade
-            //    };
-            //    listaItens.Add(novoItem);
-            //}
-            */
-
+            
             try
             {
+            
+                var clienteIdClaim =int.Parse((User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+
+
                 var itensPedido = pedido.Itens.Select(i => new ItemPedido
                 {
                     ProdutoId = i.ProdutoId,
                     Quantidade = i.Quantidade
                 }).ToList();
 
-                var novoPedido = await _pedidoService.CriarPedidoAsync(pedido.ClienteId, itensPedido);
+                var novoPedido = await _pedidoService.CriarPedidoAsync(clienteIdClaim, itensPedido);
                 
                 return CreatedAtAction(nameof(GetPedido), new { id = novoPedido.Id }, new 
                 { 

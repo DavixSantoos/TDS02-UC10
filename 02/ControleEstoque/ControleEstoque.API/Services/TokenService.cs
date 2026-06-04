@@ -33,6 +33,8 @@ namespace ControleEstoque.API.Services
             {
                 Subject = claims,
                 Expires = DateTime.UtcNow.AddHours(8),
+                Issuer = _configuration["Jwt:Emissor"],
+                Audience = _configuration["Jwt:Audiencia"],
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(chave),
                     SecurityAlgorithms.HmacSha256Signature)

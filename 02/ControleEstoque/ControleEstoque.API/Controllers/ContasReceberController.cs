@@ -1,11 +1,17 @@
 using ControleEstoque.API.DTOs;
+using ControleEstoque.API.Models;
 using ControleEstoque.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+
 
 namespace ControleEstoque.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ContasReceberController : ControllerBase
     {
         private readonly IContaReceberService _contaReceberService;
@@ -15,29 +21,26 @@ namespace ControleEstoque.API.Controllers
             _contaReceberService = contaReceberService;
         }
 
-        [HttpGet]
+        [HttpGet] //Gerente e caixa
+        [Authorize(Roles = "Gerente,Caixa")]
         public async Task<IActionResult> GetAll()
         {
+
             var contas = await _contaReceberService.ObterTodosAsync();
             return Ok(contas);
+
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var conta = await _contaReceberService.ObterPorIdAsync(id);
-            if (conta == null) return NotFound();
-            return Ok(conta);
-        }
-
-        [HttpPost]
+        [HttpPost]//Gerente 
+        [Authorize(Roles ="Gerente")]
         public async Task<IActionResult> Create([FromBody] CriarContaReceberDto dto)
         {
             var novaConta = await _contaReceberService.CriarAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = novaConta.Id }, novaConta);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")] //Gerente e caixa
+       
         public async Task<IActionResult> Update(int id, [FromBody] AtualizarContaReceberDto dto)
         {
             if (id != dto.Id) return BadRequest("O ID da rota difere do ID da conta a receber.");
