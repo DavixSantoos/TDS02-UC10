@@ -18,7 +18,7 @@ namespace ControleEstoque.API.Controllers
         {
             _pedidoService = pedidoService;
         }
-
+        //Cliente só pode ver o proprio Pedido
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPedido(int id)
         {
@@ -27,6 +27,16 @@ namespace ControleEstoque.API.Controllers
             if (pedido == null)
             {
                 return NotFound();
+            }
+
+            if (User.IsInRole("Cliente")) 
+            {
+                var clienteIdNoToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (pedido.ClienteId.ToString() != clienteIdNoToken) 
+                {
+                    return BadRequest();
+                }
             }
 
             var pedidoDto = new PedidoDto

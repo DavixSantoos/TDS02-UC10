@@ -1,6 +1,8 @@
 using ControleEstoque.API.DTOs;
 using ControleEstoque.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ControleEstoque.API.Controllers
 {
@@ -18,6 +20,7 @@ namespace ControleEstoque.API.Controllers
         #region Registro
 
         [HttpPost("registrar-cliente")]
+       
         public async Task<IActionResult> RegistrarCliente([FromBody] CriarClienteDto dto)
         {
             try
@@ -32,6 +35,7 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpPost("registrar-caixa")]
+        [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> RegistrarCaixa([FromBody] CriarCaixaDto dto)
         {
             try
@@ -46,6 +50,7 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpPost("registrar-gerente")]
+        [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> RegistrarGerente([FromBody] CriarGerenteDto dto)
         {
             try
@@ -62,10 +67,20 @@ namespace ControleEstoque.API.Controllers
         #endregion
 
         #region Atualização
-
+        //Clliente e caixa só pode atualizar o próprio cadastros
         [HttpPut("atualizar-cliente")]
+        [Authorize(Roles = "Caixa")]
         public async Task<IActionResult> AtualizarCliente([FromBody] AtualizarClienteDto dto)
         {
+            if (!User.IsInRole("Gerente"))
+            {
+                var usuarioIdNoToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (dto.Id.ToString() != usuarioIdNoToken) 
+                {
+                    return NoContent();
+                }
+            }
+
             try
             {
                 await _usuarioService.AtualizarClienteAsync(dto);
@@ -82,6 +97,7 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpPut("atualizar-caixa")]
+        [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> AtualizarCaixa([FromBody] AtualizarCaixaDto dto)
         {
             try
@@ -100,8 +116,20 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpPut("atualizar-gerente")]
+        [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> AtualizarGerente([FromBody] AtualizarGerenteDto dto)
         {
+
+
+            if (!User.IsInRole("Gerente"))
+            {
+                var usuarioIdNoToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (dto.Id.ToString() != usuarioIdNoToken) 
+                {
+                    return NoContent();
+                }
+            }
             try
             {
                 await _usuarioService.AtualizarGerenteAsync(dto);
@@ -122,23 +150,46 @@ namespace ControleEstoque.API.Controllers
         #region Consulta
 
         [HttpGet]
+        [Authorize(Roles = "Gerente, Caixa")]
         public async Task<IActionResult> GetAll()
         {
             var usuarios = await _usuarioService.ListarTodosUsuariosAsync();
             return Ok(usuarios);
         }
+        //Se for o dele, só pode obter dele mesmo
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> ObterPorId(int id)
         {
+            if (!User.IsInRole("Gerente") && !User.IsInRole("Caixa")) 
+            {
+                var usuarioIdNoToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (id.ToString() != usuarioIdNoToken) 
+                {
+                    return NoContent();
+                }
+            }
+
             var usuario = await _usuarioService.ObterUsuarioPorIdAsync(id);
             if (usuario == null) return NotFound();
             return Ok(usuario);
         }
 
+        //Se for o dele, só pode obter dele mesmo
         [HttpGet("email/{email}")]
+        [Authorize]
         public async Task<IActionResult> ObterPorEmail(string email)
         {
+            if (!User.IsInRole("Gerente") && !User.IsInRole("Caixa")) 
+            {
+                var emailNoToken = User.FindFirst(ClaimTypes.Email)?.Value;
+                if (!string.Equals(email, emailNoToken, StringComparison.OrdinalIgnoreCase)) 
+                { 
+                    return BadRequest();
+                }
+            }
+
             var usuario = await _usuarioService.ObterUsuarioPorEmailAsync(email);
             if (usuario == null) return NotFound();
             return Ok(usuario);
@@ -149,6 +200,7 @@ namespace ControleEstoque.API.Controllers
         #region Deleção
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> Delete(int id)
         {
             try
