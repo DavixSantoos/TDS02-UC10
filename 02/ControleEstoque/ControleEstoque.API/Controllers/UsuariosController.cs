@@ -3,6 +3,7 @@ using ControleEstoque.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ControleEstoque.API.Controllers
 {
@@ -72,10 +73,10 @@ namespace ControleEstoque.API.Controllers
         [Authorize(Roles = "Caixa")]
         public async Task<IActionResult> AtualizarCliente([FromBody] AtualizarClienteDto dto)
         {
-            if (!User.IsInRole("Gerente"))
+            if (!User.IsInRole("Cliente"))
             {
-                var usuarioIdNoToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (dto.Id.ToString() != usuarioIdNoToken) 
+                var clienteId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (clienteId != dto.Id.ToString()) return Unauthorized();
                 {
                     return NoContent();
                 }
@@ -181,17 +182,17 @@ namespace ControleEstoque.API.Controllers
         [Authorize]
         public async Task<IActionResult> ObterPorEmail(string email)
         {
-            if (!User.IsInRole("Gerente") && !User.IsInRole("Caixa")) 
-            {
-                var emailNoToken = User.FindFirst(ClaimTypes.Email)?.Value;
-                if (!string.Equals(email, emailNoToken, StringComparison.OrdinalIgnoreCase)) 
-                { 
-                    return BadRequest();
-                }
-            }
 
             var usuario = await _usuarioService.ObterUsuarioPorEmailAsync(email);
             if (usuario == null) return NotFound();
+
+            if (!User.IsInRole("cliente")) 
+            {
+                var clienteId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (clienteId != usuario.Id.ToString()) return Unauthorized();
+            }
+            
+
             return Ok(usuario);
         }
 

@@ -31,9 +31,9 @@ namespace ControleEstoque.API.Controllers
 
             if (User.IsInRole("Cliente")) 
             {
-                var clienteIdNoToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var clienteId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                if (pedido.ClienteId.ToString() != clienteIdNoToken) 
+                if (pedido.ClienteId.ToString() != clienteId) 
                 {
                     return BadRequest();
                 }
@@ -62,6 +62,8 @@ namespace ControleEstoque.API.Controllers
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> CriarPedido([FromBody] CriarPedidoDto pedido)
         {
+
+     
             try
             {
                 var clienteIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

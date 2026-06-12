@@ -19,6 +19,7 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles ="Gerente,Caixa")]
         public async Task<IActionResult> GetAll()
         {
             var contas = await _contaReceberService.ObterTodosAsync();
@@ -31,21 +32,13 @@ namespace ControleEstoque.API.Controllers
         // oooou, aqui vc resgata a conta, e verifica se o clienteID da conta é igual ao do bearer token
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
-        {            
+        {
             var conta = await _contaReceberService.ObterPorIdAsync(id);
-            if (conta == null) return NotFound();
 
-            var usuarioECliente = User.IsInRole("Cliente");
-            var usuarioEAdmin = User.IsInRole("Gerente") || User.IsInRole("Caixa");
-
-            if (usuarioECliente) 
+            if(User.FindFirst(ClaimTypes.Role)?.Value == "Cliente") 
             {
-                var clienteIdnoToken = User.FindFirst(ClaimTypes.NameIdentifier) ?.Issuer;
-
-                if (conta.ClienteId.ToString() != clienteIdnoToken) 
-                {
-                    return NoContent();
-                }
+                var clienteId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (clienteId != conta.ClienteId.ToString()) return Unauthorized();
             }
             return Ok(conta);
         }
