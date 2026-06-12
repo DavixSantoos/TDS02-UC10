@@ -1,8 +1,12 @@
 ﻿﻿using ControleEstoque.API.DTOs;
 using ControleEstoque.API.Models;
 using ControleEstoque.API.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+<<<<<<< HEAD
+using Microsoft.AspNetCore.Authorization;
+=======
+>>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
 using System.Security.Claims;
 
 namespace ControleEstoque.API.Controllers
@@ -59,6 +63,7 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpPost]
+<<<<<<< HEAD
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> CriarPedido([FromBody] CriarPedidoDto pedido)
         {
@@ -71,6 +76,17 @@ namespace ControleEstoque.API.Controllers
                 {
                     return Unauthorized("Usuário não autenticado ou token inválido.");
                 }
+=======
+        [Authorize(Roles = "Cliente")] //só clientes podem criar pedido
+        public async Task<IActionResult> CriarPedido([FromBody] CriarPedidoDto pedido)
+        {
+            
+            try
+            {
+            
+                var clienteIdClaim =int.Parse((User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+
+>>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
 
                 var itensPedido = pedido.Itens.Select(i => new ItemPedido
                 {
@@ -78,7 +94,11 @@ namespace ControleEstoque.API.Controllers
                     Quantidade = i.Quantidade
                 }).ToList();
 
+<<<<<<< HEAD
                 var novoPedido = await _pedidoService.CriarPedidoAsync(clienteId, itensPedido);
+=======
+                var novoPedido = await _pedidoService.CriarPedidoAsync(clienteIdClaim, itensPedido);
+>>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
                 
                 return CreatedAtAction(nameof(GetPedido), new { id = novoPedido.Id }, new 
                 { 

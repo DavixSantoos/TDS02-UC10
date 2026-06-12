@@ -2,9 +2,13 @@ using ControleEstoque.API.DTOs;
 using ControleEstoque.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+<<<<<<< HEAD
 using System.Security.Claims;
 using static System.Net.Mime.MediaTypeNames;
 
+=======
+//login e aberto a todos cadastro precisa estar autenticado como gerente
+>>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
 namespace ControleEstoque.API.Controllers
 {
     [ApiController]

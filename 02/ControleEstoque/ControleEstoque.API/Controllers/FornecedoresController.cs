@@ -3,11 +3,17 @@ using ControleEstoque.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
+//só Gerente podem tomar açoes
 namespace ControleEstoque.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+<<<<<<< HEAD
     [Authorize(Roles = "Gerente")]
+=======
+    [Authorize(Roles ="Gerente")]
+>>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
     public class FornecedoresController : ControllerBase
     {
         private readonly IFornecedorService _fornecedorService;

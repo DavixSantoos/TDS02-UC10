@@ -2,10 +2,12 @@ using ControleEstoque.API.DTOs;
 using ControleEstoque.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+//qualquer usuario autentencaido podem ver os produtos
+//apenas gerentes podem criar, atualizar produtos
 namespace ControleEstoque.API.Controllers
 {
     [ApiController]
+    
     [Route("api/[controller]")]
     [Authorize]
     public class ProdutosController : ControllerBase
@@ -18,6 +20,7 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> GetAll()
         {
             var produtos = await _produtoService.ObterTodosAsync();
@@ -41,7 +44,11 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpPut("{id}")]
+<<<<<<< HEAD
         [Authorize(Roles = "Gerente")]
+=======
+        [Authorize(Roles ="Gerente")]//
+>>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
         public async Task<IActionResult> Update(int id, [FromBody] AtualizarProdutoDto dto)
         {
             if (id != dto.Id) return BadRequest("O ID da rota difere do ID do produto.");
