@@ -20,6 +20,8 @@ namespace ControleEstoque.API.Data
         public DbSet<ItemPedido> ItensPedido { get; set; }
         public DbSet<ContaReceber> ContasReceber { get; set; }
 
+        public DbSet<FormaPagamento> FormaPagamentos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Adiciona configurações extras, além dos decarators

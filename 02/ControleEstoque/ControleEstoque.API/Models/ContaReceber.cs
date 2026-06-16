@@ -9,7 +9,7 @@ namespace ControleEstoque.API.Models
         public int Id { get; set; }
 
         [Required, StringLength(100)]
-        public string Descricao { get; set; }
+        public string Descricao { get; set; } = string.Empty;
 
         [Required, Column(TypeName = "decimal(10,2)")]
         public decimal Valor { get; set; }
@@ -25,6 +25,6 @@ namespace ControleEstoque.API.Models
         [Required]
         public int ClienteId { get; set; }
 
-        public Cliente Cliente { get; set; }
+        public Cliente Cliente { get; set; } = new Cliente();
     }
 }

@@ -44,11 +44,7 @@ namespace ControleEstoque.API.Controllers
         }
 
         [HttpPut("{id}")]
-<<<<<<< HEAD
         [Authorize(Roles = "Gerente")]
-=======
-        [Authorize(Roles ="Gerente")]//
->>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
         public async Task<IActionResult> Update(int id, [FromBody] AtualizarProdutoDto dto)
         {
             if (id != dto.Id) return BadRequest("O ID da rota difere do ID do produto.");

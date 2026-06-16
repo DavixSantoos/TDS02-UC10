@@ -1,3 +1,4 @@
+
 namespace ControleEstoque.API.Services
 {
     public interface IPasswordService

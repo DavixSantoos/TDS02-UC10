@@ -3,10 +3,9 @@ using ControleEstoque.API.Models;
 using ControleEstoque.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-<<<<<<< HEAD
+
 using Microsoft.AspNetCore.Authorization;
-=======
->>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
+
 using System.Security.Claims;
 
 namespace ControleEstoque.API.Controllers

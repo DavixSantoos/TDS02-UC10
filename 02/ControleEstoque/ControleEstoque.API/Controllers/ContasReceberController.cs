@@ -4,11 +4,6 @@ using ControleEstoque.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-<<<<<<< HEAD
-=======
-
-
->>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
 
 namespace ControleEstoque.API.Controllers
 {
@@ -24,13 +19,13 @@ namespace ControleEstoque.API.Controllers
             _contaReceberService = contaReceberService;
         }
 
-<<<<<<< HEAD
+
         [HttpGet]
         [Authorize(Roles ="Gerente,Caixa")]
-=======
+
         [HttpGet] //Gerente e caixa
         [Authorize(Roles = "Gerente,Caixa")]
->>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
+
         public async Task<IActionResult> GetAll()
         {
 
@@ -39,7 +34,7 @@ namespace ControleEstoque.API.Controllers
 
         }
 
-<<<<<<< HEAD
+
         // O cliente só deve acessar conta a receber que pertence exclusivamente a ele
         // Há dois caminhos. Restringir esse endpoint para gerente e caixa...
         // ... criando outro caminho que busca a conta a receber por id (e resgta do bearer token)
@@ -59,23 +54,22 @@ namespace ControleEstoque.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Gerente,Caixa")]
-=======
+
         [HttpPost]//Gerente 
         [Authorize(Roles ="Gerente")]
->>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
+
         public async Task<IActionResult> Create([FromBody] CriarContaReceberDto dto)
         {
             var novaConta = await _contaReceberService.CriarAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = novaConta.Id }, novaConta);
         }
 
-<<<<<<< HEAD
-        [HttpPut("{id}")]
+
+        [HttpPut("{id}")] 
         [Authorize(Roles = "Gerente,Caixa")]
-=======
-        [HttpPut("{id}")] //Gerente e caixa
-       
->>>>>>> b187db1c3dcaaaf66aaa1b96a32bed1cdca97ac1
+
+      
+      
         public async Task<IActionResult> Update(int id, [FromBody] AtualizarContaReceberDto dto)
         {
             if (id != dto.Id) return BadRequest("O ID da rota difere do ID da conta a receber.");
